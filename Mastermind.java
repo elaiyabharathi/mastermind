@@ -92,7 +92,9 @@ class Dict {
         {
         	if(line.length()==4)
         	{
+        		
         		all4Words.add(line);
+        		
         		
         	}
         	if(line.length()==5)
@@ -116,10 +118,15 @@ class Dict {
 	}
 	
 	public void copyToRWords(int difficulty){
+		//public static ArrayList<String> rWords;
+		
 		if(difficulty == 4){
+			//System.out.println(all4Words.toString());
 			rWords = new ArrayList<String>(all4Words);
+			//System.out.println(rWords.toString());
 		}
-		if(difficulty == 5){
+		else if(difficulty == 5){
+			//System.out.println("hello");
 			rWords = new ArrayList<String>(all5Words);
 		}
 		else{
@@ -227,5 +234,7 @@ public class Mastermind {
 				System.out.println("");
 			}
 		}
+		System.out.println("-------------ENDED----------------");
 	}
+	
 }
