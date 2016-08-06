@@ -145,17 +145,21 @@ class Dict {
 }
 
 public class Mastermind {
-	static int EASY = 4;
-	int MEDIUM = 5;
-	int HARD = 6;
+	static int difficulty;
 	public static void main(String args[]) throws IOException{
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		
+		System.out.println("Enter the level of difficulty \n1. Easy\n 2. Medium\n 3. Hard");
+		difficulty = Integer.parseInt(br.readLine()) + 3;
+		
 		Dict dictionary = new Dict(4);
 		String PCword = dictionary.chooseWordByPc();
+		
 		System.out.println("Choose a word you want to play against");
-		System.out.println("PC word:"+PCword);
+		//System.out.println("PC word:"+PCword);
+		
 		while(true){
-			System.out.println("Enter your guessed "+ EASY +" letter word");
+			System.out.println("Enter your guessed "+ difficulty +" letter word");
 			String PlayerGuessedWord;
 			while(true){
 				PlayerGuessedWord =  br.readLine();
@@ -163,7 +167,7 @@ public class Mastermind {
 					break;
 			}
 			int pMatchedCountLength = dictionary.matchCount(PlayerGuessedWord,PCword);
-			if(pMatchedCountLength == EASY){
+			if(pMatchedCountLength == difficulty){
 				System.out.println("You WON!!"+PCword);
 				break;
 			}
@@ -173,19 +177,21 @@ public class Mastermind {
 			String PCguessedWord = dictionary.randomGenerator();
 			System.out.println("PC guess:"+PCguessedWord);
 			
-			System.out.println("Enter number of common letters");
+			System.out.println("Enter number of common letters or type -1 if PC wins");
 			int countOfCommon = Integer.parseInt(br.readLine());
+			if(countOfCommon == -1){
+				System.out.println("PC Won");
+				break;
+			}
 			if(countOfCommon == 0 ){
 				dictionary.removeWords(PCguessedWord);
 			}
-			else if(countOfCommon == 4){
-				System.out.println("PC WON!!!!"+PCguessedWord);
-				break;
-			}
 			else{
 				dictionary.decreaseDomain(PCguessedWord, countOfCommon);
+				
 				dictionary.removeWord(PCguessedWord);
 			}
+			System.out.println("size of dictionary : "+dictionary.rWords.size());
 			System.out.println("");
 		}
 	}
