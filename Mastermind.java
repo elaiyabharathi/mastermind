@@ -9,7 +9,11 @@ import java.util.*;
 class Dict {
 	
 	
-	public static ArrayList<String> rWords = new ArrayList();
+	public static ArrayList<String> rWords;
+	public static ArrayList<String> all4Words = new ArrayList();
+	public static ArrayList<String> all5Words = new ArrayList();
+	public static ArrayList<String> all6Words = new ArrayList();
+	
 	public static HashMap<String,Integer> globalWordList = new HashMap();
 	public String randomGenerator(){
 		Random generator = new Random();
@@ -75,7 +79,7 @@ class Dict {
 	}
 
 
-	public Dict(int level) throws IOException{
+	public Dict() throws IOException{
 		BufferedReader br=null;
         
         try 
@@ -86,11 +90,21 @@ class Dict {
         
         while((line =br.readLine()) != null)
         {
-        	if(line.length()==level)
+        	if(line.length()==4)
         	{
-        		rWords.add(line);
-        		globalWordList.put(line, 1);
+        		all4Words.add(line);
+        		
         	}
+        	if(line.length()==5)
+        	{
+        		all5Words.add(line);
+        	}
+        	if(line.length()==6){
+        		
+        		all6Words.add(line);
+        		
+        	}
+        	globalWordList.put(line, 1);
         }
         	           
        }
@@ -100,6 +114,19 @@ class Dict {
        }
 
 	}
+	
+	public void copyToRWords(int difficulty){
+		if(difficulty == 4){
+			rWords = new ArrayList<String>(all4Words);
+		}
+		if(difficulty == 5){
+			rWords = new ArrayList<String>(all5Words);
+		}
+		else{
+			rWords = new ArrayList<String>(all6Words);
+		}
+	}
+	
 	public static int getCount(int[] tempWordCountArray, String line)
     {       
             int notMatch=0;
@@ -147,52 +174,58 @@ class Dict {
 public class Mastermind {
 	static int difficulty;
 	public static void main(String args[]) throws IOException{
+		
+		Dict dictionary = new Dict();
+		
+		
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		
-		System.out.println("Enter the level of difficulty \n1. Easy\n 2. Medium\n 3. Hard");
-		difficulty = Integer.parseInt(br.readLine()) + 3;
-		
-		Dict dictionary = new Dict(4);
-		String PCword = dictionary.chooseWordByPc();
-		
-		System.out.println("Choose a word you want to play against");
-		//System.out.println("PC word:"+PCword);
-		
 		while(true){
-			System.out.println("Enter your guessed "+ difficulty +" letter word");
-			String PlayerGuessedWord;
+			System.out.println("Enter the level of difficulty \n1. Easy\n 2. Medium\n 3. Hard\n 4.End game");
+			difficulty = Integer.parseInt(br.readLine()) + 3;
+			if(difficulty == 7)
+				break;
+			dictionary.copyToRWords(difficulty);
+			String PCword = dictionary.chooseWordByPc();
 			while(true){
-				PlayerGuessedWord =  br.readLine();
-				if(dictionary.isInDict(PlayerGuessedWord))
+			System.out.println("Choose a word you want to play against");
+			System.out.println("PC word:"+PCword);
+			
+			
+				System.out.println("Enter your guessed "+ difficulty +" letter word");
+				String PlayerGuessedWord;
+				while(true){
+					PlayerGuessedWord =  br.readLine();
+					if(dictionary.isInDict(PlayerGuessedWord))
+						break;
+				}
+				int pMatchedCountLength = dictionary.matchCount(PlayerGuessedWord,PCword);
+				if(PlayerGuessedWord.equals(PCword)){
+					System.out.println("You WON!!"+PCword);
 					break;
-			}
-			int pMatchedCountLength = dictionary.matchCount(PlayerGuessedWord,PCword);
-			if(pMatchedCountLength == difficulty){
-				System.out.println("You WON!!"+PCword);
-				break;
-			}
-			
-			System.out.println("count of common letters for pc word "+pMatchedCountLength);
-			
-			String PCguessedWord = dictionary.randomGenerator();
-			System.out.println("PC guess:"+PCguessedWord);
-			
-			System.out.println("Enter number of common letters or type -1 if PC wins");
-			int countOfCommon = Integer.parseInt(br.readLine());
-			if(countOfCommon == -1){
-				System.out.println("PC Won");
-				break;
-			}
-			if(countOfCommon == 0 ){
-				dictionary.removeWords(PCguessedWord);
-			}
-			else{
-				dictionary.decreaseDomain(PCguessedWord, countOfCommon);
+				}
 				
-				dictionary.removeWord(PCguessedWord);
+				System.out.println("count of common letters for pc word "+pMatchedCountLength);
+				
+				String PCguessedWord = dictionary.randomGenerator();
+				System.out.println("PC guess:"+PCguessedWord);
+				
+				System.out.println("Enter number of common letters or type -1 if PC wins");
+				int countOfCommon = Integer.parseInt(br.readLine());
+				if(countOfCommon == -1){
+					System.out.println("PC Won");
+					break;
+				}
+				if(countOfCommon == 0 ){
+					dictionary.removeWords(PCguessedWord);
+				}
+				else{
+					dictionary.decreaseDomain(PCguessedWord, countOfCommon);
+					
+					dictionary.removeWord(PCguessedWord);
+				}
+				System.out.println("size of dictionary : "+dictionary.rWords.size());
+				System.out.println("");
 			}
-			System.out.println("size of dictionary : "+dictionary.rWords.size());
-			System.out.println("");
 		}
 	}
 }
